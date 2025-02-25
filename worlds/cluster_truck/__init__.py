@@ -104,7 +104,7 @@ class ClusterTruckWorld(World):
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data : Mapping[str, Any] = {
-            "version": "0.0.0",
+            "version": "1.0.0",
             "start": self.start_level_name,
             "goal": self.goal_level_name,
             "goal_requirement": int(self.options.goal_requirement.value),
