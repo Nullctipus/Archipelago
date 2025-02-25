@@ -116,7 +116,7 @@ class CTLevelChoice(Choice):
         )
 
 class StartLevel(CTLevelChoice):
-    """Level to start in"""
+    """Choose the level to start in"""
     display_name = "Start Level"
     default = 0
 
@@ -126,7 +126,7 @@ class GoalLevel(CTLevelChoice):
     default = 89
 
 class GoalRequirement(Range):
-    """Number of levels required to unlock the goal"""
+    """Choose the number of levels required to unlock the goal"""
     display_name = "Goal Requirement"
     range_start = 5
     range_end = 70
@@ -138,20 +138,6 @@ class SkipLevels(OptionSet):
     valid_keys = {f"{i//10+1}-{i%10+1}" for i in range(90)}
     default = {}
 
-class AceRewards(Toggle):
-    """Adds rewards for acing levels"""
-    display_name = "Ace Rewards"
-
-class TrapPercent(Range):
-    """
-    Choose the odds of each trap item being created when filling pool with filler
-
-    Only matters if Ace Rewards is enabled.
-    """
-    display_name = "Trap Item Percent"
-    range_start = 0
-    range_end = 100
-    default = 25
 
 @dataclass
 class ClusterTruckOptions(PerGameCommonOptions):
@@ -159,5 +145,3 @@ class ClusterTruckOptions(PerGameCommonOptions):
     goal_level: GoalLevel
     goal_requirement: GoalRequirement
     skipped_levels: SkipLevels
-    ace_rewards: AceRewards
-    trap_percent: TrapPercent

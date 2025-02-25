@@ -17,7 +17,9 @@ class CTItem:
     type: ItemType
 
 
-item_list: List[CTItem] = [
+item_list: List[CTItem] = [CTItem(f"{i//10+1}-{i%10+1}",ItemType.Level) for i in range(90)]
+
+item_list.extend([
     CTItem("Double Jump", ItemType.Ability),
     CTItem("Air Dash", ItemType.Ability),
     CTItem("Jetpack", ItemType.Ability),
@@ -37,6 +39,4 @@ item_list: List[CTItem] = [
     CTItem("Infinite Stamina",ItemType.Filler),
     CTItem("Impulse",ItemType.Trap),
     CTItem("Brake",ItemType.Trap),
-]
-
-item_list.extend([CTItem(f"{i//10+1}-{i%10+1}",ItemType.Level) for i in range(90)])
+])
