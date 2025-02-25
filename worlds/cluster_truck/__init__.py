@@ -57,36 +57,38 @@ class ClusterTruckWorld(World):
     def generate_early(self) -> None:
         self.goal_level_name = f"{self.options.goal_level.value // 10 + 1}-{self.options.goal_level.value % 10 + 1}"
         self.start_level_name = f"{self.options.start_level.value // 10 + 1}-{self.options.start_level.value % 10 + 1}"
-        self.skipped_level =  [(int(skip.split('-')[-1])-1)*10+ int(skip.split('-')[1])-1 for skip in self.options.skipped_levels.value]
+        self.skipped_level =  [(int(skip.split('-')[-1])-1)*10+ int(skip.split('-')[1])-1
+                               for skip in self.options.skipped_levels.value]
         self.all_selected_locations = [location for location in location_list if location
                                   and location.game_id not in self.skipped_level]
-
-        if self.options.ace_rewards.value:
-            self.all_selected_locations.extend([CTLocation(f"{i // 10 + 1}-{i % 10 + 1} Ace", len(location_list)+i) for i in range(90) if i not in self.skipped_level])
+        self.item_name_to_id["Victory"] = base_id + 108
+        self.item_id_to_name[base_id + 108] = "Victory"
 
     def create_item(self, name: str) -> "Item":
         location = item_list[self.item_name_to_id[name] - base_id]
-        return ClusterTruckItem(name, self.item_type_classification[location.type], self.item_name_to_id[name], self.player)
+        return ClusterTruckItem(name, self.item_type_classification[location.type],
+                                self.item_name_to_id[name], self.player)
 
     def create_items(self) -> None:
         for location in self.all_selected_locations:
             if location.game_id > len(location_list):
                 break # make sure no ace levels get added for fun
             try:
-                if location.game_id != self.options.start_level.value:
+                if (location.game_id != self.options.start_level.value
+                        and location.game_id != self.options.goal_level.value):
                     self.multiworld.itempool.append(self.create_item(location.name))
             except Exception as e:
                 print(location.name)
                 raise e
-        trap = list(self.item_name_groups["Traps"])
-        filler = list(self.item_name_groups["Filler"])
-        if self.options.ace_rewards.value:
-            for i in range(90):
-                if i not in self.skipped_level and not self.options.goal_level.value:
-                    if self.random.random() <= self.options.trap_percent/100:
-                        self.multiworld.itempool.append(self.create_item(self.random.choice(trap)))
-                    else:
-                        self.multiworld.itempool.append(self.create_item(self.random.choice(filler)))
+
+        victory: Location = self.get_location(self.goal_level_name)
+        victory.place_locked_item(ClusterTruckItem("Victory",ItemClassification.progression_skip_balancing
+                                                   ,base_id+108,self.player))
+        self.multiworld.completion_condition[self.player] = lambda state: \
+            state.has("Victory",self.player)
+
+        # there needs to be one more item /shrug
+        self.multiworld.itempool.append(self.create_item("+1000p"))
 
     def create_regions(self) -> None:
         menu_region = Region("Menu", self.player, self.multiworld)
@@ -95,24 +97,17 @@ class ClusterTruckWorld(World):
         all_selected_locations_copy = self.all_selected_locations.copy()
         self.random.shuffle(all_selected_locations_copy)
 
-        menu_region.locations.append(ClusterTruckLocation(self.player,self.start_level_name,base_id + self.options.start_level.value,menu_region))
-
         for location in all_selected_locations_copy:
-            menu_region.locations.append(ClusterTruckLocation(self.player,location.name,base_id+location.game_id,menu_region))
+            menu_region.locations.append(ClusterTruckLocation(
+                self.player,location.name,base_id+location.game_id,menu_region))
 
-
-    def set_rules(self) -> None:
-        victory: Location = self.get_location(self.goal_level_name)
-        victory.place_locked_item(ClusterTruckItem("Victory",ItemClassification.progression_skip_balancing,None,self.player))
-        self.multiworld.completion_condition[self.player] = lambda state: \
-            state.has("Victory",self.player)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data : Mapping[str, Any] = {
             "version": "0.0.0",
             "start": self.start_level_name,
             "goal": self.goal_level_name,
-            "ace_reward": bool(self.options.ace_rewards.value),
+            "goal_requirement": int(self.options.goal_requirement.value),
             "base_id": int(base_id),
         }
         return slot_data

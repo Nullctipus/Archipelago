@@ -6,7 +6,9 @@ class CTLocation:
     name: str
     game_id: int
 
-location_list: List[CTLocation] =[
+location_list: List[CTLocation] =[CTLocation(f"{i//10+1}-{i%10+1}",i) for i in range(90)]
+
+location_list.extend([
     CTLocation("Double Jump",90),
     CTLocation("Air Dash",91),
     CTLocation("Jetpack",92),
@@ -21,5 +23,4 @@ location_list: List[CTLocation] =[
     CTLocation("Epic Mode",101),
     CTLocation("Supertruck",102),
     CTLocation("Disrespected Blink",103)
-]
-location_list.extend([CTLocation(f"{i//10+1}-{i%10+1}",i) for i in range(90)])
+])
