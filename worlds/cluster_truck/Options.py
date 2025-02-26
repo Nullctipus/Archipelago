@@ -138,6 +138,12 @@ class SkipLevels(OptionSet):
     valid_keys = {f"{i//10+1}-{i%10+1}" for i in range(90)}
     default = {}
 
+class TrapPercentage(Range):
+    """Choose the percentage of trap items that will appear when filling the pool with filler"""
+    display_name = "Trap Percentage"
+    range_start = 0
+    range_end = 100
+    default = 25
 
 @dataclass
 class ClusterTruckOptions(PerGameCommonOptions):
@@ -145,3 +151,4 @@ class ClusterTruckOptions(PerGameCommonOptions):
     goal_level: GoalLevel
     goal_requirement: GoalRequirement
     skipped_levels: SkipLevels
+    trap_percentage: TrapPercentage
