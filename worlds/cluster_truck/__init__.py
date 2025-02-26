@@ -5,6 +5,7 @@ from .Items import item_list, base_id, ItemType
 from .Locations import location_list, CTLocation
 from .Options import ClusterTruckOptions
 
+
 class ClusterTruckItem(Item):
     game = "ClusterTruck"
 
@@ -49,8 +50,8 @@ class ClusterTruckWorld(World):
         ItemType.Trap: ItemClassification.trap,
         ItemType.Filler: ItemClassification.filler,
     }
-    skipped_level : List[int] = []
-    all_selected_locations : List[CTLocation] = []
+    skipped_level : List[int]
+    all_selected_locations : List[CTLocation]
     start_level_name : str
     goal_level_name : str
 
@@ -60,9 +61,13 @@ class ClusterTruckWorld(World):
         self.skipped_level =  [(int(skip.split('-')[-1])-1)*10+ int(skip.split('-')[1])-1
                                for skip in self.options.skipped_levels.value]
         self.all_selected_locations = [location for location in location_list if location
-                                  and location.game_id not in self.skipped_level]
-        self.item_name_to_id["Victory"] = base_id + 108
-        self.item_id_to_name[base_id + 108] = "Victory"
+                                  and location.game_id not in self.skipped_level
+                                    and location.game_id != self.options.goal_level.value]
+
+    def get_filler_item_name(self) -> str:
+        if self.random.random() <= self.options.trap_percentage.value:
+            return self.random.choice([item.name for item in item_list if item.type == ItemType.Trap])
+        return self.random.choice([item.name for item in item_list if item.type == ItemType.Filler])
 
     def create_item(self, name: str) -> "Item":
         location = item_list[self.item_name_to_id[name] - base_id]
@@ -83,12 +88,12 @@ class ClusterTruckWorld(World):
 
         victory: Location = self.get_location(self.goal_level_name)
         victory.place_locked_item(ClusterTruckItem("Victory",ItemClassification.progression_skip_balancing
-                                                   ,base_id+108,self.player))
+                                                   ,None,self.player))
         self.multiworld.completion_condition[self.player] = lambda state: \
             state.has("Victory",self.player)
 
         # there needs to be one more item /shrug
-        self.multiworld.itempool.append(self.create_item("+1000p"))
+        self.multiworld.itempool.append(self.create_item(self.get_filler_item_name()))
 
     def create_regions(self) -> None:
         menu_region = Region("Menu", self.player, self.multiworld)
@@ -101,10 +106,12 @@ class ClusterTruckWorld(World):
             menu_region.locations.append(ClusterTruckLocation(
                 self.player,location.name,base_id+location.game_id,menu_region))
 
+        menu_region.locations.append(ClusterTruckLocation(self.player,self.goal_level_name,None,menu_region))
+
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data : Mapping[str, Any] = {
-            "version": "1.0.0",
+            "version": "1.1.0",
             "start": self.start_level_name,
             "goal": self.goal_level_name,
             "goal_requirement": int(self.options.goal_requirement.value),
