@@ -136,7 +136,13 @@ class SkipLevels(OptionSet):
     """List as many levels as you would like to skip completing"""
     display_name = "Skipped Levels"
     valid_keys = {f"{i//10+1}-{i%10+1}" for i in range(90)}
-    default = {}
+
+class PointMultiplier(Range):
+    """Multiplies the amount of points earned to reduce grinding"""
+    display_name = "Point Multiplier"
+    range_start = 1
+    range_end = 20
+    default = 5
 
 class TrapPercentage(Range):
     """Choose the percentage of trap items that will appear when filling the pool with filler"""
@@ -151,4 +157,5 @@ class ClusterTruckOptions(PerGameCommonOptions):
     goal_level: GoalLevel
     goal_requirement: GoalRequirement
     skipped_levels: SkipLevels
+    point_multiplier: PointMultiplier
     trap_percentage: TrapPercentage

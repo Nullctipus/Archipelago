@@ -12,18 +12,26 @@
 ## If you are playing
 1. Download BepInEx.zip from the [releases page](https://github.com/Nullctipus/ArchipelagoClusterTruck/releases)
 2. Extract in your ClusterTruck directory (default is `C:\ProgramFiles (x86)\Steam\SteamApps\Common\ClusterTruck`)
-3. Optionally: enable console in `BepInEx/config/BepInEx.cfg` by setting `Logging.Console.Enabled = true`
-4. Start the game.
-5. Optionally: press `F1` to edit the mods settings.
-6. On the upper left type in Address, Slot Name, and optionally Password.
-7. Click Connect
-8. Optionally: enable DeathLink on the upper left
-9. Have Fun
+3. Download and install [.NET Desktop Runtime 9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+4. Optionally: enable console in `BepInEx/config/BepInEx.cfg` by setting `Logging.Console.Enabled = true`
+5. Start the game.
+6. Optionally: press `F1` to edit the mods settings.
+7. On the upper left type in Address, Slot Name, and optionally Password.
+8. Click Connect
+9. Optionally: enable DeathLink on the upper left
+10. Have Fun
 
 ## Linux
-First make sure you have a Windows version of the game by enabling a Compatibility Tool. I used `Proton 9.0-4`
-
-Then edit your Launch Option to `SDL_VIDEODRIVER= WINEDLLOVERRIDES="winhttp=n,b" %command%`. This will allow SDL to use whatever videodriver it can and load BepInEx.
+0. THE SNAP VERSION WILL NOT WORK, EITHER USE PROTON OR SWITCH TO NATIVE/FLATPAK
+   1. Make sure you have mono and dotnet 9.0 installed
+1. Download BepInEx.zip from the [releases page](https://github.com/Nullctipus/ArchipelagoClusterTruck/releases)
+2. Extract in your ClusterTruck directory (default is `~/.local/share/Steam/steamapps/common/Clustertruck`)
+3. Delete `BepInEx/Core`
+4. Download [BepInEx_linux_x64_5.4.23.2.zip](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.2)
+5. Extract to game folder
+6. Edit `run_bepinex.sh` so that `dll_search_path_override="unstripped"`
+7. Set Launch Options to `./run_bepinex.sh "%command%"`
+8. Continue from step 3 of above list
 
 ## Inside BepInEx.zip
 If you don't want to download the zip you can make it yourself
@@ -44,4 +52,3 @@ If you don't want to download the zip you can make it yourself
 4. Edits
    - Edit `doorstop_config.ini` to replace `dll_search_path_override = ` with `dll_search_path_override = unstripped`
    - Edit `BepInEx/config/BepInEx.cfg` to replace `Preloader.Entrypoint.Type = Application` with `Preloader.Entrypoint.Type = Camera`
-

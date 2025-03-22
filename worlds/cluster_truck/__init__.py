@@ -4,6 +4,7 @@ from worlds.AutoWorld import World, WebWorld
 from .Items import item_list, base_id, ItemType
 from .Locations import location_list, CTLocation
 from .Options import ClusterTruckOptions
+from ..generic.Rules import set_rule
 
 
 class ClusterTruckItem(Item):
@@ -58,7 +59,7 @@ class ClusterTruckWorld(World):
     def generate_early(self) -> None:
         self.goal_level_name = f"{self.options.goal_level.value // 10 + 1}-{self.options.goal_level.value % 10 + 1}"
         self.start_level_name = f"{self.options.start_level.value // 10 + 1}-{self.options.start_level.value % 10 + 1}"
-        self.skipped_level =  [(int(skip.split('-')[-1])-1)*10+ int(skip.split('-')[1])-1
+        self.skipped_level =  [(int(skip.split('-')[0])-1)*10+ int(skip.split('-')[1])-1
                                for skip in self.options.skipped_levels.value]
         self.all_selected_locations = [location for location in location_list if location
                                   and location.game_id not in self.skipped_level
@@ -77,7 +78,7 @@ class ClusterTruckWorld(World):
     def create_items(self) -> None:
         for location in self.all_selected_locations:
             if location.game_id > len(location_list):
-                break # make sure no ace levels get added for fun
+                break
             try:
                 if (location.game_id != self.options.start_level.value
                         and location.game_id != self.options.goal_level.value):
@@ -89,8 +90,6 @@ class ClusterTruckWorld(World):
         victory: Location = self.get_location(self.goal_level_name)
         victory.place_locked_item(ClusterTruckItem("Victory",ItemClassification.progression_skip_balancing
                                                    ,None,self.player))
-        self.multiworld.completion_condition[self.player] = lambda state: \
-            state.has("Victory",self.player)
 
         # there needs to be one more item /shrug
         self.multiworld.itempool.append(self.create_item(self.get_filler_item_name()))
@@ -108,13 +107,24 @@ class ClusterTruckWorld(World):
 
         menu_region.locations.append(ClusterTruckLocation(self.player,self.goal_level_name,None,menu_region))
 
+    def set_rules(self) -> None:
+        for i in range(90):
+            if i == self.options.start_level.value or i == self.options.goal_level.value:
+                continue
+            name = f"{i//10+1}-{i%10+1}"
+            set_rule(self.get_location(name),lambda state, name=name: state.has(name, self.player))
+        self.multiworld.completion_condition[self.player] = lambda state: state.has_from_list_unique(
+            [item.name for item in item_list if item.type == ItemType.Level and item.name is not self.goal_level_name and
+             item.name is not self.start_level_name and item.name not in self.options.skipped_levels.value],
+            self.player,self.options.goal_requirement.value)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data : Mapping[str, Any] = {
-            "version": "1.1.0",
+            "version": "1.2.0",
             "start": self.start_level_name,
             "goal": self.goal_level_name,
             "goal_requirement": int(self.options.goal_requirement.value),
+            "point_multiplier" : int(self.options.point_multiplier.value),
             "base_id": int(base_id),
         }
         return slot_data
