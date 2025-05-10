@@ -109,7 +109,7 @@ class ClusterTruckWorld(World):
 
     def set_rules(self) -> None:
         for i in range(90):
-            if i == self.options.start_level.value or i == self.options.goal_level.value:
+            if i == self.options.start_level.value or i == self.options.goal_level.value or i in self.skipped_level:
                 continue
             name = f"{i//10+1}-{i%10+1}"
             set_rule(self.get_location(name),lambda state, name=name: state.has(name, self.player))
