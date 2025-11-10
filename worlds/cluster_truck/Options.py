@@ -1,8 +1,8 @@
 import random
 from dataclasses import dataclass
-from Options import Choice, Range, OptionSet, Toggle, PerGameCommonOptions, T
+from Options import Choice, Range, OptionSet, Toggle, PerGameCommonOptions, T, TextChoice
 
-class CTLevelChoice(Choice):
+class CTLevelChoice(TextChoice):
     randomized: bool
     option_1_1 = 0
     option_1_2 = 1
@@ -116,12 +116,20 @@ class CTLevelChoice(Choice):
         )
 
 class StartLevel(CTLevelChoice):
-    """Choose the level to start in"""
+    """
+    Choose the level to start in
+    Valid options: /([1-9]-(10|[1-9])|random)/
+    random will select a random level with equal probability
+    """
     display_name = "Start Level"
     default = 0
 
 class GoalLevel(CTLevelChoice):
-    """Choose level to complete to finish the game"""
+    """
+    Choose level to complete to finish the game
+    Valid options: /([1-9]-(10|[1-9])|random)/
+    random will select a random level with equal probability
+    """
     display_name = "Goal Level"
     default = 89
 
@@ -133,7 +141,10 @@ class GoalRequirement(Range):
     default = 40
 
 class SkipLevels(OptionSet):
-    """List as many levels as you would like to skip completing"""
+    """
+    List as many levels as you would like to skip completing
+    Valid options: /[1-9]-(10|[1-9])/
+    """
     display_name = "Skipped Levels"
     valid_keys = {f"{i//10+1}-{i%10+1}" for i in range(90)}
 
@@ -143,6 +154,16 @@ class PointMultiplier(Range):
     range_start = 1
     range_end = 20
     default = 5
+
+class DeathlinkAmnesty(Range):
+    """
+    The number of deaths needed to send out a deathlink event
+    Deathlink can be disabled entirely in-game
+    """
+    display_name = "Deathlink Amnesty"
+    range_start = 1
+    range_end = 100
+    default = 10
 
 class TrapPercentage(Range):
     """Choose the percentage of trap items that will appear when filling the pool with filler"""
@@ -158,4 +179,5 @@ class ClusterTruckOptions(PerGameCommonOptions):
     goal_requirement: GoalRequirement
     skipped_levels: SkipLevels
     point_multiplier: PointMultiplier
+    deathlink_amnesty: DeathlinkAmnesty
     trap_percentage: TrapPercentage

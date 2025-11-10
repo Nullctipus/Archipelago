@@ -125,6 +125,7 @@ class ClusterTruckWorld(World):
             "goal": self.goal_level_name,
             "goal_requirement": int(self.options.goal_requirement.value),
             "point_multiplier" : int(self.options.point_multiplier.value),
+            "deathlink_amnesty" : int(self.options.deathlink_amnesty.value),
             "base_id": int(base_id),
         }
         return slot_data
