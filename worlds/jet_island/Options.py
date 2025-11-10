@@ -67,7 +67,7 @@ class DisabledModifierList(OptionSet):
         'Delicate Player',
         'Super Wormy',
     }
-    default = ['Falling Up', 'Upsidedown World', 'Gun Only', 'Ground Is Lava', 'TenX Speed']
+    default = ['Falling Up', 'Upsidedown World', 'Gun Only', 'Ground Is Lava', 'TenX Speed', 'Sun Gravity']
 
 @dataclass
 class JetIslandOptions(PerGameCommonOptions):
