@@ -1,6 +1,7 @@
 import random
 from dataclasses import dataclass
 from Options import Choice, Range, OptionSet, Toggle, PerGameCommonOptions, T, TextChoice
+from .Helpers import format_level_name, parse_level_name
 
 class CTLevelChoice(TextChoice):
     randomized: bool
@@ -94,6 +95,21 @@ class CTLevelChoice(TextChoice):
     option_9_8 = 87
     option_9_9 = 88
     option_9_10 = 89
+    option_h_1 = 90
+    option_h_2 = 91
+    option_h_3 = 92
+    option_h_4 = 93
+    option_h_5 = 94
+    option_h_6 = 95
+    option_h_7 = 96
+    option_h_8 = 97
+    option_h_9 = 98
+    option_h_10 = 99
+    option_c_1 = 100
+    option_c_2 = 101
+    option_c_3 = 102
+    option_c_4 = 103
+    option_c_5 = 104
     def __init__(self, value: int, randomized: bool = False):
         super().__init__(value)
         self.randomized = randomized
@@ -118,7 +134,7 @@ class CTLevelChoice(TextChoice):
 class StartLevel(CTLevelChoice):
     """
     Choose the level to start in
-    Valid options: /([1-9]-(10|[1-9])|random)/
+    Valid options: /([1-9hc]-(10|[1-9])|random)/
     random will select a random level with equal probability
     """
     display_name = "Start Level"
@@ -127,7 +143,7 @@ class StartLevel(CTLevelChoice):
 class GoalLevel(CTLevelChoice):
     """
     Choose level to complete to finish the game
-    Valid options: /([1-9]-(10|[1-9])|random)/
+    Valid options: /([1-9hc]-(10|[1-9])|random)/
     random will select a random level with equal probability
     """
     display_name = "Goal Level"
@@ -137,16 +153,16 @@ class GoalRequirement(Range):
     """Choose the number of levels required to unlock the goal"""
     display_name = "Goal Requirement"
     range_start = 5
-    range_end = 70
+    range_end = 103
     default = 40
 
 class SkipLevels(OptionSet):
     """
     List as many levels as you would like to skip completing
-    Valid options: /[1-9]-(10|[1-9])/
+    Valid options: /[1-9hc]-(10|[1-9])/
     """
     display_name = "Skipped Levels"
-    valid_keys = {f"{i//10+1}-{i%10+1}" for i in range(90)}
+    valid_keys = {format_level_name(i) for i in range(105)}
 
 class PointMultiplier(Range):
     """Multiplies the amount of points earned to reduce grinding"""

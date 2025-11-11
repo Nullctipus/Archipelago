@@ -2,6 +2,8 @@ from typing import List, Dict, Set
 from dataclasses import dataclass
 from enum import Enum
 
+from .Helpers import format_level_name, parse_level_name
+
 base_id = 9002100
 
 class ItemType(Enum):
@@ -17,7 +19,7 @@ class CTItem:
     type: ItemType
 
 
-item_list: List[CTItem] = [CTItem(f"{i//10+1}-{i%10+1}",ItemType.Level) for i in range(90)]
+item_list: List[CTItem] = [CTItem(format_level_name(i),ItemType.Level) for i in range(105)]
 
 item_list.extend([
     CTItem("Double Jump", ItemType.Ability),

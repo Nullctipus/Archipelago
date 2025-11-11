@@ -1,26 +1,30 @@
 from typing import List, Dict
 from dataclasses import dataclass
 
+
+from .Helpers import format_level_name, parse_level_name
+
 @dataclass
 class CTLocation:
     name: str
     game_id: int
 
-location_list: List[CTLocation] =[CTLocation(f"{i//10+1}-{i%10+1}",i) for i in range(90)]
+
+location_list: List[CTLocation] = [CTLocation(format_level_name(i), i) for i in range(105)]
 
 location_list.extend([
-    CTLocation("Double Jump",90),
-    CTLocation("Air Dash",91),
-    CTLocation("Jetpack",92),
-    CTLocation("Levitation",93),
-    CTLocation("Grappling Hook",94),
-    CTLocation("Truck Boost",95),
-    CTLocation("Back Truck",96),
-    CTLocation("Trucker Flip",97),
-    CTLocation("Time Slow",98),
-    CTLocation("Portable Truck",99),
-    CTLocation("Trucksolute Zero",100),
-    CTLocation("Epic Mode",101),
-    CTLocation("Supertruck",102),
-    CTLocation("Disrespected Blink",103)
+    CTLocation("Double Jump", 105),
+    CTLocation("Air Dash", 106),
+    CTLocation("Jetpack", 107),
+    CTLocation("Levitation", 108),
+    CTLocation("Grappling Hook", 109),
+    CTLocation("Truck Boost", 110),
+    CTLocation("Back Truck", 111),
+    CTLocation("Trucker Flip", 112),
+    CTLocation("Time Slow", 113),
+    CTLocation("Portable Truck", 114),
+    CTLocation("Trucksolute Zero", 115),
+    CTLocation("Epic Mode", 116),
+    CTLocation("Supertruck", 117),
+    CTLocation("Disrespected Blink", 118)
 ])
