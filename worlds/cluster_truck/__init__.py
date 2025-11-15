@@ -111,7 +111,7 @@ class ClusterTruckWorld(World):
         menu_region.locations.append(ClusterTruckLocation(self.player, self.goal_level_name, None, menu_region))
 
     def set_rules(self) -> None:
-        for i in range(90):
+        for i in range(105):
             if i == self.options.start_level.value or i == self.options.goal_level.value or i in self.skipped_level:
                 continue
             name = format_level_name(i)
