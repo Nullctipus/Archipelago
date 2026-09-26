@@ -1,4 +1,5 @@
-from typing import Dict, List, Any, Union, Optional, Mapping
+from typing import Dict, List, Any, Union, Optional, Mapping, ClassVar, Type
+from Options import PerGameCommonOptions
 from BaseClasses import Location, Item, Tutorial, ItemClassification, Region, CollectionState
 from worlds.AutoWorld import World, WebWorld
 from ..generic.Rules import set_rule
@@ -24,8 +25,8 @@ class JetIsland(World):
     location_name_to_id = {loc.name: (loc.id) for loc in location_list}
     allItems = item_list + filler_list
 
-    options_dataclass = JetIslandOptions
-    options = JetIslandOptions
+    options_dataclass: ClassVar[Type[PerGameCommonOptions]]  = JetIslandOptions
+    options: JetIslandOptions
 
     item_type_classification : Dict[ItemType,ItemClassification] = {
         ItemType.Ability: ItemClassification.progression,
