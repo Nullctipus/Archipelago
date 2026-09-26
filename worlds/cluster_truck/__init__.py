@@ -1,9 +1,10 @@
-from typing import Dict, List, Any, Union, Optional, Mapping
+from typing import Dict, List, Any, Union, Optional, Mapping, ClassVar, Type
 from BaseClasses import Location, Item, Tutorial, ItemClassification, Region
 from worlds.AutoWorld import World, WebWorld
 from .Items import item_list, base_id, ItemType
 from .Locations import location_list, CTLocation
 from .Helpers import format_level_name, parse_level_name
+from Options import PerGameCommonOptions, OptionError
 from .Options import ClusterTruckOptions
 from ..generic.Rules import set_rule
 
@@ -45,8 +46,8 @@ class ClusterTruckWorld(World):
         "Traps": {item.name for item in item_list if item.type == ItemType.Trap},
         "Filler": {item.name for item in item_list if item.type == ItemType.Filler},
     }
-    options_dataclass = ClusterTruckOptions
-    options = ClusterTruckOptions
+    options_dataclass: ClassVar[Type[PerGameCommonOptions]] = ClusterTruckOptions
+    options: ClusterTruckOptions
 
     item_type_classification: Dict[ItemType, ItemClassification] = {
         ItemType.Ability: ItemClassification.useful,
@@ -64,9 +65,25 @@ class ClusterTruckWorld(World):
         self.start_level_name = format_level_name(self.options.start_level.value)
         self.skipped_level = [parse_level_name(skip)
                               for skip in self.options.skipped_levels.value]
+        if self.options.goal_level.value in self.skipped_level:
+            raise OptionError("Cannot Skip the Goal Level")
+            # self.skipped_level.remove(self.options.goal_level.value)
+            
+        if self.options.start_level.value in self.skipped_level:
+            raise OptionError("Cannot Skip the Start Level")
+            # self.skipped_level.remove(self.options.start_level.value)
+        
+        if self.options.start_level.value == self.options.goal_level.value:
+            raise OptionError("Start Level cannot be the same as Goal Level")
+        
         self.all_selected_locations = [location for location in location_list if location
                                        and location.game_id not in self.skipped_level
                                        and location.game_id != self.options.goal_level.value]
+        
+        max_goal_requirement = sum(i.game_id < 105 for i in self.all_selected_locations) - 1
+        
+        if self.options.goal_requirement.value > max_goal_requirement:
+            raise OptionError(f"Too many levels have been skipped to meet goal requirement. Maximum is {max_goal_requirement}")
 
     def get_filler_item_name(self) -> str:
         if self.random.random() <= self.options.trap_percentage.value:
